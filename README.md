@@ -17,3 +17,5 @@ Tradestation indicator that indicates price crosses against a Moving Average. An
 #### TODO
 
 - [ ] Add an option to support Price Cross based on High/Low touches against the MA.
+- [ ] Better visual support in Radarscreen (currently that is not it's main use case)
+
