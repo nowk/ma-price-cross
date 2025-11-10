@@ -54,5 +54,5 @@ Begin
 	Setplotcolor( 1, Red );
 End;
 
-Plot1(plotIndex, "MA Price Cross Plot");
+Plot1(plotIndex, !("MaPriceCrossIdx"));
 
