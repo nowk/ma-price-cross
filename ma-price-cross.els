@@ -1,0 +1,58 @@
+{------------------------------------------------------------------------------
+  Open Source under the MIT License – free to use, modify, and share.
+  TradeStation® is a trademark of TradeStation Group, Inc.; all rights reserved.
+------------------------------------------------------------------------------}
+
+Inputs:
+	Price( Close ),
+	
+	int BullCrossIdx(1),
+	int BearCrossIdx(-1),
+	int BullTrendIdx(0),
+	int BearTrendIdx(0),
+	int Length(20);
+	
+Variables:  
+	Avg( 0 );
+
+// calculate average (basically SMA)
+Avg = AverageFC( Price, Length );
+
+Variables:
+	bool isBullCross( false ),
+	bool isBearCross( false ),
+	int plotIndex( 0 );
+
+// plot index is 0
+plotIndex = 0;
+
+// plot price biases to ma
+If Close > Avg Then
+Begin
+	plotIndex = BullTrendIdx;
+	Setplotcolor( 1, Green );
+End
+Else If Close < Avg Then
+Begin
+	plotIndex = BearTrendIdx;
+	Setplotcolor( 1, Red );
+End;
+
+// bull price crossing
+isBullCross = Close[1] < Avg[1] And Close > Avg;
+If isBullCross = True Then
+Begin
+	plotIndex = BullCrossIdx;
+	Setplotcolor( 1, Green );
+End;
+	
+// bear price crossing
+isBearCross = Close[1] > Avg[1] And Close < Avg;
+if isBearCross = True Then
+Begin
+	plotIndex = BearCrossIdx;
+	Setplotcolor( 1, Red );
+End;
+
+Plot1(plotIndex, "MA Price Cross Plot");
+
