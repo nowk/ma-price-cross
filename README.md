@@ -7,6 +7,8 @@ Tradestation indicator that indicates price crosses against a Moving Average. An
 
 ![MA Price Cross Sample](assets/chart.jpg)
 
+*Example displays crossings against the 20 period Simple Moving Average (SMA), indicated by the light blue light.*
+
 #### NOTE
 
 - Price cross is determined by a prior Close below and the current Close above the Moving Average for a bullish scenario (and vice versa).
