@@ -21,38 +21,86 @@ Avg = AverageFC( Price, Length );
 Variables:
 	bool isBullCross( false ),
 	bool isBearCross( false ),
-	int plotIndex( 0 );
+	intrabarpersist bool TrendUp( false ),
+	intrabarpersist bool TrendDn( false );
 
-// plot index is 0
-plotIndex = 0;
+Setplottype( 2, Ptstring );
+Setplottype( 3, Ptstring );
+
+Begin
+	Plot1( 0, !("MaPriceCrossIdx"), White, Default, 2 );
+	
+	// specific to radar screen
+	Plot2( "", "Trend" );
+	Plot3( "", "Alert" );
+	Setplotbgcolor( 3, Transparent );
+End;
+
+// NOTE bias change (TrendUp/TrendDn) does not actually change till the cross is
+// confirmed at the EOD; Radarscreen "Trend" will always reflect this. Indicator
+// (MaPriceCrossIdx) and "Alert" will always show the realtime cross.
 
 // plot price biases to ma
 If Close > Avg Then
 Begin
-	plotIndex = BullTrendIdx;
+	Plot1(BullTrendIdx, !("MaPriceCrossIdx"));
 	Setplotcolor( 1, Green );
-End
-Else If Close < Avg Then
+	
+	If ( BarStatus( 1 ) = 2 ) then
+	Begin
+		TrendUp = true;
+		TrendDn = false;
+	End;
+End;
+
+If Close < Avg Then
 Begin
-	plotIndex = BearTrendIdx;
+	Plot1(BearTrendIdx, !("MaPriceCrossIdx"));
 	Setplotcolor( 1, Red );
+	
+	If ( BarStatus( 1 ) = 2 ) then
+	Begin
+		TrendUp = false;
+		TrendDn = true;
+	End;
+End;
+
+// NOTE for Radarscreen Trend coloring to work, need to load additional bars
+// NOTE this must come after the assignments above, or it will not switch over
+// after the close of the market.
+If ( TrendUp ) Then
+Begin
+	Setplotbgcolor( 2, Green );
+End;
+
+If ( TrendDn ) Then
+Begin
+	Setplotbgcolor( 2, Red );
 End;
 
 // bull price crossing
 isBullCross = Close[1] < Avg[1] And Close > Avg;
 If isBullCross = True Then
 Begin
-	plotIndex = BullCrossIdx;
+	Plot1(BullCrossIdx, !("MaPriceCrossIdx"));
 	Setplotcolor( 1, Green );
+	
+	Plot3( !( "BullCross" ), "Alert" );
+	Setplotbgcolor( 3, Blue );
+	
+	Alert( !("MaPriceCross: BullCross") );
 End;
 	
 // bear price crossing
 isBearCross = Close[1] > Avg[1] And Close < Avg;
 if isBearCross = True Then
 Begin
-	plotIndex = BearCrossIdx;
+	Plot1(BearCrossIdx, !("MaPriceCrossIdx"));
 	Setplotcolor( 1, Red );
+	
+	Plot3( !( "BearCross" ), "Alert" );
+	Setplotbgcolor( 3, Magenta );
+	
+	Alert( !("MaPriceCross: BearCross") );
 End;
-
-Plot1(plotIndex, !("MaPriceCrossIdx"));
 
